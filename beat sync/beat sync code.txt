@@ -1,0 +1,152 @@
+/* This code is just a skeleton to actual code required to run this project and has instructions where the user can modify
+according to his requirements to make the project more creative */
+
+#include <fix_fft.h>
+
+//initializing the pins
+int led[] = {5,6,7,8,9,10,11,12}; // initialize as actually connected
+#define AUDIOPIN 3 // define the pin actually connected to read analog input.
+int x = 0;
+
+char im[128], data[128];
+
+char data_avgs[14];
+ // to store the frequency components of incomng signal.
+
+int i=0,val1,val2;
+
+void setup()
+{
+  for (int i = 0; i <8; i++)
+  {
+    pinMode(led[i], OUTPUT);
+  }
+  Serial.begin(9600);
+
+}
+
+void loop()
+{
+  for (i=0; i < 128; i++){                                   
+    val = analogRead(AUDIOPIN);                                  
+    data[i] = val;                                     
+    im[i] = 0;                                                   
+  };
+
+  fix_fft(data,im,7,0);
+
+  for (i=0; i< 64;i++){                                    
+    data[i] = sqrt(data[i] * data[i] + im[i] * im[i]); 
+ // to acquire the absolute value of the values in the array
+    // so we're only dealing with positive numbers
+  };   
+  // average bars together
+  for (i=0; i<14; i++) {
+    data_avgs[i] = data[i*4] + data[i*4 + 1] + data[i*4 + 2] + data[i*4 + 3];
+   // average together
+    data_avgs[i] = map(data_avgs[i], 0, 30, 0, 9);                              
+    // remap values
+  }
+  int value= data_avgs[0];//0 for bass
+  int value2 = data_avgs[13]; // for treble
+  ledcontrol(value);
+   
+}
+// this functions dictates how the switching on of the LED's,this code deals with simple LED's only
+// for RGB LED's we need 3 pins for each LED 
+// also write another function to control the LEDs according to treble.
+void ledcontrol(int input)
+{
+  //
+  if (input > 8)
+  {
+     for (int i = 0; i <8; i++)
+     {
+       digitalWrite(led[i], HIGH);
+     }
+  }
+  else if (input > 7)
+  {
+     for (int i = 0; i <7; i++)
+     {
+       digitalWrite(led[i], HIGH);
+     }
+     for (int i = 7; i <8; i++)
+     {
+       digitalWrite(led[i], LOW);
+     }
+  }
+  else if (input > 6)
+  {
+     for (int i = 0; i <6; i++)
+     {
+       digitalWrite(led[i], HIGH);
+     }
+     for (int i = 6; i <8; i++)
+     {
+       digitalWrite(led[i], LOW);
+     }
+  }
+  else if (input > 5)
+  {
+     for (int i = 0; i <5; i++)
+     {
+       digitalWrite(led[i], HIGH);
+     }
+     for (int i = 5; i <8; i++)
+     {
+       digitalWrite(led[i], LOW);
+     }
+  }
+  else if (input > 4)
+  {
+     for (int i = 0; i <4; i++)
+     {
+       digitalWrite(led[i], HIGH);
+     }
+     for (int i = 4; i <8; i++)
+     {
+       digitalWrite(led[i], LOW);
+     }
+  }
+  else if (input > 3)
+  {
+     for (int i = 0; i <3; i++)
+     {
+       digitalWrite(led[i], HIGH);
+     }
+     for (int i = 3; i <8; i++)
+     {
+       digitalWrite(led[i], LOW);
+     }
+  }
+  else if (input > 2)
+  {
+     for (int i = 0; i <2; i++)
+     {
+       digitalWrite(led[i], HIGH);
+     }
+     for (int i = 2; i <8; i++)
+     {
+       digitalWrite(led[i], LOW);
+     }
+  }
+  else if (input > 1)
+  {
+     for (int i = 0; i <1; i++)
+     {
+       digitalWrite(led[i], HIGH);
+     }
+     for (int i = 1; i <8; i++)
+     {
+       digitalWrite(led[i], LOW);
+     }
+  }
+  else
+  {
+    for (int i = 0; i <8; i++)
+     {
+       digitalWrite(led[i], LOW);
+     }
+  }
+}
